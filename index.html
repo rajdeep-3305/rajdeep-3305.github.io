@@ -32,6 +32,20 @@
         pointer-events: none;
     }
 
+    .link {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid transparent; 
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+
+    .link:hover {
+        background: #ffffff;
+        color: #000000;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+        border-color: #fff;
+    }
+   
     .table {
         background: rgba(255, 255, 255, 0.02);
         backdrop-filter: blur(10px);
