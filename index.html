@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>Rajdeep</title>
+    <meta name="description" content="Rajdeep's personal website.">
+    <link rel="stylesheet" href="assets/css/normalize.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" href="assets/img/casanova.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,500,0,0">
+    <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+    <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #000000, #292929, #434343);
+            background-attachment: fixed;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+        
+        .table {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .button {
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255,255,255,0.05);
+        }
+        .button:hover {
+            background: #ffffff;
+            color: #000000;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div id="header-content">
+            <img id="userPhoto" src="assets/img/casanova.png" alt="casanova Logo">
+            <h1 id="userName">Rajdeep</h1>
+            <span class="text">20. Android Developer. he/him</span>
+            <div id="links">
+                <a class="link" href="https://github.com/rajdeep-3305" rel="noopener">GitHub</a>
+                <a class="link" href="https://www.instagram.com/notrxj7" rel="noopener">Instagram</a>
+                <a class="link" href="https://t.me/casanova_3305" rel="noopener">Telegram</a>
+            </div>
+
+            <a href="#projects"><span class="arrow">expand_more</span></a>
+        </div>
+    </header>
+
+    <div id="projects">
+        <h1 class="header-text">My Projects</h1>
+            <div class="table">
+                <h2>device_xiaomi_rubyx</h2>
+                <span class="text">ROM developer for Redmi Note 12 Pro(+) 5G [rubyx]</span>
+                <div class="buttons">
+                    <a class="button" href="https://github.com/rajdeep-3305/device_xiaomi_rubyx" rel="noopener">View Source</a>
+                </div>
+            </div>
+
+            <div class="table">
+                <h2>rajdeep-3305.github.io</h2>
+                <span class="text">This website's source code.</span>
+                <div class="buttons">
+                    <a class="button" href="#header-content" rel="noopener">You're already here</a>
+                    <a class="button" href="https://github.com/rajdeep-3305/rajdeep-3305.github.io" rel="noopener">GitHub</a>
+                </div>
+            </div>
+    </div>
+
+    <div id="about">
+        <h1 class="header-text">About me</h1>
+            <div class="table">
+                <h2>Rajdeep</h2>
+                <span class="text">I’m an Electrical Engineering student, interested in Open-Source Android.</span>
+            </div>
+    </div>
+
+    <footer>Made with love. <br> casanova. © 2025.</footer>
+
+</body>
+</html>
