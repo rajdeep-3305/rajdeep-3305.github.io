@@ -189,5 +189,80 @@
 
     <footer>Made with love. <br> casanova. © 2025.</footer>
 
+<script>
+    const canvas = document.getElementById('trail-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    let mouse = { x: undefined, y: undefined };
+    
+    window.addEventListener('mousemove', (e) => {
+        mouse.x = e.x;
+        mouse.y = e.y;
+        
+        // Add more particles for a denser nebula effect
+        for (let i = 0; i < 5; i++) {
+            particles.push(new Particle());
+        }
+    });
+
+    class Particle {
+        constructor() {
+            this.x = mouse.x;
+            this.y = mouse.y;
+            this.size = Math.random() * 2 + 1; // Base size
+            this.speedX = Math.random() * 1.5 - 0.75; // Slower, smoother drift
+            this.speedY = Math.random() * 1.5 - 0.75;
+            this.color = 'rgba(255, 255, 255, 0.8)'; 
+        }
+
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            // Very slow shrink for long tails
+            if (this.size > 0.1) this.size -= 0.03; 
+        }
+
+        draw() {
+            ctx.fillStyle = this.color;
+            // High blur for the nebula look
+            ctx.shadowBlur = 20; 
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0; // Reset
+        }
+    }
+
+    function animate() {
+        // THE NEBULA TRICK:
+        // Instead of clearing, we paint a semi-transparent black layer.
+        // This makes old particles fade out slowly, creating the blur trail.
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; 
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].update();
+            particles[i].draw();
+            
+            if (particles[i].size <= 0.1) {
+                particles.splice(i, 1);
+                i--;
+            }
+        }
+        requestAnimationFrame(animate);
+    }
+    
+    animate();
+</script>
+
 </body>
 </html>
