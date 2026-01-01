@@ -207,8 +207,8 @@
         mouse.x = e.x;
         mouse.y = e.y;
         
-        // Add more particles for a denser nebula effect
-        for (let i = 0; i < 5; i++) {
+        // Add particles on move
+        for (let i = 0; i < 2; i++) {
             particles.push(new Particle());
         }
     });
@@ -217,35 +217,37 @@
         constructor() {
             this.x = mouse.x;
             this.y = mouse.y;
-            this.size = Math.random() * 2 + 1; // Base size
-            this.speedX = Math.random() * 1.5 - 0.75; // Slower, smoother drift
-            this.speedY = Math.random() * 1.5 - 0.75;
-            this.color = 'rgba(255, 255, 255, 0.8)'; 
+            this.size = Math.random() * 5 + 2; // Larger, softer start size
+            this.speedX = Math.random() * 1 - 0.5; // Very slow drift
+            this.speedY = Math.random() * 1 - 0.5;
+            this.life = 1.0; // Opacity start
         }
 
         update() {
             this.x += this.speedX;
             this.y += this.speedY;
-            // Very slow shrink for long tails
-            if (this.size > 0.1) this.size -= 0.03; 
+            // Fade out smoothly instead of shrinking
+            if (this.life > 0) this.life -= 0.02; 
         }
 
         draw() {
-            ctx.fillStyle = this.color;
-            // High blur for the nebula look
-            ctx.shadowBlur = 20; 
-            ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+            // THE COMET FIX: Use a Radial Gradient (Glow) instead of a solid Circle
+            // This removes the "snowball" hard edge.
+            const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 2);
+            
+            // Center is white, Edge is transparent
+            gradient.addColorStop(0, 'rgba(255, 255, 255, ' + this.life + ')');
+            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+            ctx.fillStyle = gradient;
             ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2);
             ctx.fill();
-            ctx.shadowBlur = 0; // Reset
         }
     }
 
     function animate() {
-        // THE NEBULA TRICK:
-        // Instead of clearing, we paint a semi-transparent black layer.
-        // This makes old particles fade out slowly, creating the blur trail.
+        // This '0.1' opacity creates the long blur trail
         ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; 
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
@@ -253,7 +255,8 @@
             particles[i].update();
             particles[i].draw();
             
-            if (particles[i].size <= 0.1) {
+            // Remove when invisible
+            if (particles[i].life <= 0) {
                 particles.splice(i, 1);
                 i--;
             }
