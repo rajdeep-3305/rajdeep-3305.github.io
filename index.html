@@ -202,65 +202,79 @@
     resizeCanvas();
 
     let mouse = { x: undefined, y: undefined };
+    let lastMouse = { x: undefined, y: undefined };
     
     window.addEventListener('mousemove', (e) => {
         mouse.x = e.x;
         mouse.y = e.y;
         
-        // Add particles on move
-        for (let i = 0; i < 2; i++) {
-            particles.push(new Particle());
+        if (lastMouse.x === undefined) {
+            lastMouse.x = mouse.x;
+            lastMouse.y = mouse.y;
+            return;
         }
+
+        const dx = mouse.x - lastMouse.x;
+        const dy = mouse.y - lastMouse.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const step = 2; 
+        
+        for (let i = 0; i < distance; i += step) {
+            const percent = i / distance;
+            const x = lastMouse.x + (dx * percent);
+            const y = lastMouse.y + (dy * percent);
+            particles.push(new Particle(x, y));
+        }
+
+        lastMouse.x = mouse.x;
+        lastMouse.y = mouse.y;
     });
 
     class Particle {
-        constructor() {
-            this.x = mouse.x;
-            this.y = mouse.y;
-            this.size = Math.random() * 5 + 2; // Larger, softer start size
-            this.speedX = Math.random() * 1 - 0.5; // Very slow drift
-            this.speedY = Math.random() * 1 - 0.5;
-            this.life = 1.0; // Opacity start
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.size = Math.random() * 8 + 2; 
+            this.speedX = Math.random() * 0.4 - 0.2;
+            this.speedY = Math.random() * 0.4 - 0.2;
+            this.life = 1.0; 
         }
 
         update() {
             this.x += this.speedX;
             this.y += this.speedY;
-            // Fade out smoothly instead of shrinking
-            if (this.life > 0) this.life -= 0.02; 
+            this.life -= 0.015; 
         }
 
         draw() {
-            // THE COMET FIX: Use a Radial Gradient (Glow) instead of a solid Circle
-            // This removes the "snowball" hard edge.
-            const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 2);
-            
-            // Center is white, Edge is transparent
-            gradient.addColorStop(0, 'rgba(255, 255, 255, ' + this.life + ')');
+            const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, ' + (this.life * 0.3) + ')'); 
             gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
 
             ctx.fillStyle = gradient;
             ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2);
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
             ctx.fill();
         }
     }
 
     function animate() {
-        // This '0.1' opacity creates the long blur trail
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; 
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)'; 
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
+        ctx.globalCompositeOperation = 'lighter';
+
         for (let i = 0; i < particles.length; i++) {
             particles[i].update();
             particles[i].draw();
             
-            // Remove when invisible
             if (particles[i].life <= 0) {
                 particles.splice(i, 1);
                 i--;
             }
         }
+        
+        ctx.globalCompositeOperation = 'source-over';
         requestAnimationFrame(animate);
     }
     
