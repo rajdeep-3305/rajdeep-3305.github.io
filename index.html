@@ -46,20 +46,19 @@
         box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
         border-color: #fff;
     }
-   
+    
     .table {
         background: rgba(255, 255, 255, 0.02);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.15);
         box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
-        transition: transform 0.2s ease, border-color 0.2s ease;
+        transition: transform 0.1s ease, border-color 0.2s ease;
     }
 
     .table:hover {
         border-color: rgba(255, 255, 255, 0.4);
         background: rgba(255, 255, 255, 0.05);
-        transform: translateY(-2px);
         box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
     }
 
@@ -72,6 +71,13 @@
         background: rgba(0, 0, 0, 0.7);
         color: #eee;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        padding: 10px 20px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        border-radius: 4px;
     }
 
     .button:hover {
@@ -94,122 +100,6 @@
 </style>
 
 <canvas id="trail-canvas"></canvas>
-
-<script>
-    const canvas = document.getElementById('trail-canvas');
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    let mouse = { x: undefined, y: undefined };
-    
-    window.addEventListener('mousemove', (e) => {
-        mouse.x = e.x;
-        mouse.y = e.y;
-        
-        for (let i = 0; i < 3; i++) {
-            particles.push(new Particle());
-        }
-    });
-
-    class Particle {
-        constructor() {
-            this.x = mouse.x;
-            this.y = mouse.y;
-            this.size = Math.random() * 2 + 1;
-            this.speedX = Math.random() * 2 - 1;
-            this.speedY = Math.random() * 2 - 1;
-            this.color = 'rgba(255, 255, 255, 1)'; 
-        }
-
-        update() {
-            this.x += this.speedX;
-            this.y += this.speedY;
-            if (this.size > 0.1) this.size -= 0.05;
-        }
-
-        draw() {
-            ctx.fillStyle = this.color;
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = 'white';
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.shadowBlur = 0;
-        }
-    }
-
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        for (let i = 0; i < particles.length; i++) {
-            particles[i].update();
-            particles[i].draw();
-            
-            if (particles[i].size <= 0.1) {
-                particles.splice(i, 1);
-                i--;
-            }
-        }
-        requestAnimationFrame(animate);
-    }
-    
-    animate();
-</script>
-
-</head>
-
-<body>
-    <header class="header">
-        <div id="header-content">
-            <img id="userPhoto" src="assets/img/casanova.png" alt="casanova Logo">
-            <h1 id="userName">Rajdeep.</h1>
-            <span class="text">20. Student / Android Developer. he/him</span>
-            <div id="links">
-                <a class="link" href="https://github.com/rajdeep-3305" rel="noopener">GitHub</a>
-                <a class="link" href="https://www.instagram.com/notrxj7" rel="noopener">Instagram</a>
-                <a class="link" href="https://t.me/casanova_3305" rel="noopener">Telegram</a>
-            </div>
-
-            <a href="#projects"><span class="arrow">expand_more</span></a>
-        </div>
-    </header>
-
-    <div id="projects">
-        <h1 class="header-text">My Projects</h1>
-            <div class="table">
-                <h2>device_xiaomi_rubyx</h2>
-                <span class="text">Device trees for Redmi Note 12 Pro(+) 5G [rubyx]</span>
-                <div class="buttons">
-                    <a class="button" href="https://github.com/rajdeep-3305/device_xiaomi_rubyx" rel="noopener">View Source</a>
-                </div>
-            </div>
-
-            <div class="table">
-                <h2>rajdeep-3305.github.io</h2>
-                <span class="text">This website's source code.</span>
-                <div class="buttons">
-                    <a class="button" href="#header-content" rel="noopener">You're already here</a>
-                    <a class="button" href="https://github.com/rajdeep-3305/rajdeep-3305.github.io" rel="noopener">GitHub</a>
-                </div>
-            </div>
-    </div>
-
-    <div id="about">
-        <h1 class="header-text">About me</h1>
-            <div class="table">
-                <h2>Rajdeep</h2>
-                <span class="text">I’m an Electrical Engineering student, interested in Open-Source Android.</span>
-            </div>
-    </div>
-
-    <footer>Made with love. <br> casanova. © 2025.</footer>
 
 <script>
     const canvas = document.getElementById('trail-canvas');
@@ -250,6 +140,17 @@
 
         lastMouse.x = mouse.x;
         lastMouse.y = mouse.y;
+    });
+
+    window.addEventListener('mousedown', (e) => {
+        for (let i = 0; i < 15; i++) {
+            const p = new Particle(e.x, e.y);
+            p.speedX = (Math.random() - 0.5) * 8;
+            p.speedY = (Math.random() - 0.5) * 8;
+            p.size = Math.random() * 3 + 2;
+            p.life = 1.5;
+            particles.push(p);
+        }
     });
 
     class Particle {
@@ -301,7 +202,82 @@
     }
     
     animate();
+
+    const cards = document.querySelectorAll('.table');
+
+    cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = ((y - centerY) / centerY) * -10;
+            const rotateY = ((x - centerX) / centerX) * 10;
+
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale(1)`;
+        });
+    });
 </script>
+
+</head>
+
+<body>
+    <header class="header">
+        <div id="header-content">
+            <img id="userPhoto" src="assets/img/casanova.png" alt="casanova Logo">
+            <h1 id="userName">Rajdeep.</h1>
+            <span class="text">20. Student | Android Developer. he/him</span>
+            <div id="links">
+                <a class="link" href="https://github.com/rajdeep-3305" rel="noopener">GitHub</a>
+                <a class="link" href="https://www.instagram.com/notrxj7" rel="noopener">Instagram</a>
+                <a class="link" href="https://t.me/casanova_3305" rel="noopener">Telegram</a>
+            </div>
+
+            <a href="#projects"><span class="arrow">expand_more</span></a>
+        </div>
+    </header>
+
+    <div id="projects">
+        <h1 class="header-text">My Projects</h1>
+            <div class="table">
+                <h2>device_xiaomi_rubyx</h2>
+                <span class="text">Device trees for Redmi Note 12 Pro(+) 5G [rubyx]</span>
+                <div class="buttons">
+                    <a class="button" href="https://github.com/rajdeep-3305/device_xiaomi_rubyx" rel="noopener">View Source</a>
+                    
+                    <a class="button" style="border-color: #00ff88; color: #00ff88; box-shadow: 0 0 10px rgba(0,255,136,0.1);" href="https://casanova-cloud.rajdeep-3305.workers.dev" target="_blank" rel="noopener">
+                        <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle; margin-right: 5px;">cloud_download</span>
+                        Download my builds here ^^
+                    </a>
+                </div>
+            </div>
+
+            <div class="table">
+                <h2>rajdeep-3305.github.io</h2>
+                <span class="text">This website's source code.</span>
+                <div class="buttons">
+                    <a class="button" href="#header-content" rel="noopener">You're already here</a>
+                    <a class="button" href="https://github.com/rajdeep-3305/rajdeep-3305.github.io" rel="noopener">GitHub</a>
+                </div>
+            </div>
+    </div>
+
+    <div id="about">
+        <h1 class="header-text">About me</h1>
+            <div class="table">
+                <h2>Rajdeep</h2>
+                <span class="text">I’m an Electrical Engineering student, interested in Open-Source Android.</span>
+            </div>
+    </div>
+
+    <footer>Made with love. <br> casanova. © 2025.</footer>
 
 </body>
 </html>
