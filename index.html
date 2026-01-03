@@ -73,7 +73,7 @@
                 
                 <button class="button" onclick="openModal()" style="border-color: #00ff88; color: #00ff88; box-shadow: 0 0 10px rgba(0,255,136,0.1);">
                     <span class="material-symbols-outlined" style="font-size: 16px; margin-right: 5px;">cloud_download</span>
-                    Download my builds!
+                    Download Builds
                 </button>
             </div>
         </div>
@@ -113,6 +113,7 @@
     </div>
 
     <script>
+        // CONFIG: Your Cloudflare Worker URL
         const WORKER_URL = "https://casanova-cloud.rajdeep-3305.workers.dev";
         
         let folderHistory = [];
@@ -125,7 +126,7 @@
                 modal.style.opacity = '1';
                 document.querySelector('.modal-content').style.transform = 'scale(1)';
             }, 10);
-            loadFiles();
+            loadFiles(); // Load root folder
         }
 
         function closeModal() {
@@ -133,7 +134,7 @@
             document.querySelector('.modal-content').style.transform = 'scale(0.9)';
             setTimeout(() => {
                 modal.style.display = 'none';
-                folderHistory = [];
+                folderHistory = []; // Reset history
             }, 300);
         }
 
@@ -156,12 +157,13 @@
         function renderFiles(files, currentFolder) {
             list.innerHTML = '';
             
+            // Add "Back" button if we are deep in folders
             if (folderHistory.length > 0) {
                 const backDiv = document.createElement('div');
                 backDiv.className = 'back-row';
                 backDiv.innerHTML = '<span class="material-symbols-rounded">arrow_back</span> Back';
                 backDiv.onclick = () => {
-                    folderHistory.pop();
+                    folderHistory.pop(); // Remove current
                     const prev = folderHistory.length > 0 ? folderHistory[folderHistory.length - 1] : null;
                     loadFiles(prev);
                 };
@@ -195,7 +197,9 @@
                         loadFiles(f.id);
                     } else {
                         // DOWNLOAD TRIGGER
-                        window.open(`${WORKER_URL}/${f.id}`, '_blank');
+                        // "window.location.href" ensures it downloads on the current page
+                        // It does NOT open a new tab.
+                        window.location.href = `${WORKER_URL}/${f.id}`;
                     }
                 };
                 list.appendChild(div);
@@ -208,6 +212,7 @@
             return (s / Math.pow(1024, i)).toFixed(2) * 1 + " " + ["B", "kB", "MB", "GB", "TB"][i];
         }
 
+        // Close modal when clicking outside
         window.onclick = function(event) {
             if (event.target == modal) closeModal();
         }
