@@ -9,11 +9,16 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="icon" href="assets/img/casanova.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,500,0,0">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
 
 <style>
+    /* CORE STYLES */
     body { background-color: #000000; color: #ffffff; min-height: 100vh; margin: 0; overflow-x: hidden; font-family: sans-serif; }
     
+    /* CURSOR TRAIL CANVAS */
+    #trail-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+
+    /* LINK & BUTTON STYLES */
     .link { padding: 5px 10px; border-radius: 4px; border: 1px solid transparent; transition: all 0.2s ease; text-decoration: none; color: #fff; }
     .link:hover { background: #ffffff; color: #000000; box-shadow: 0 0 15px rgba(255, 255, 255, 0.6); }
     
@@ -23,9 +28,11 @@
     .button { border: 1px solid rgba(255, 255, 255, 0.3); background: rgba(0, 0, 0, 0.7); color: #eee; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: inline-flex; align-items: center; text-decoration: none; padding: 10px 20px; margin-right: 10px; margin-bottom: 10px; border-radius: 4px; cursor: pointer; }
     .button:hover { background: #ffffff; color: #000000; box-shadow: 0 0 15px rgba(255, 255, 255, 0.6); }
 
+    /* HEADER & PHOTO */
     #userPhoto { border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 0 20px rgba(255,255,255,0.1); transition: 0.3s; width: 100px; height: 100px; border-radius: 50%; }
     #userPhoto:hover { transform: scale(1.1); border-color: #ffffff; box-shadow: 0 0 30px rgba(255,255,255,0.8); }
     
+    /* MODAL STYLES (The Popup) */
     #romModal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px); align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
     .modal-content { background: #111; border: 1px solid #333; width: 90%; max-width: 600px; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); overflow: hidden; transform: scale(0.9); transition: transform 0.3s ease; display: flex; flex-direction: column; max-height: 80vh; }
     .modal-header { padding: 20px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; background: #161616; }
@@ -33,6 +40,7 @@
     .close-btn { background: none; border: none; color: #666; cursor: pointer; padding: 5px; transition: 0.2s; display: flex; }
     .close-btn:hover { color: #fff; }
     
+    /* FILE LIST IN MODAL */
     #fileList { padding: 10px; overflow-y: auto; flex-grow: 1; }
     .file-row { display: flex; align-items: center; justify-content: space-between; padding: 15px; margin-bottom: 5px; background: rgba(255,255,255,0.03); border-radius: 8px; cursor: pointer; transition: 0.2s; text-decoration: none; color: #eee; border: 1px solid transparent; }
     .file-row:hover { background: rgba(255,255,255,0.08); border-color: #00ff88; transform: translateX(5px); }
@@ -41,6 +49,7 @@
     .folder-icon { color: #f4d03f; }
     .file-size { font-size: 0.8em; color: #888; background: rgba(0,0,0,0.4); padding: 3px 8px; border-radius: 4px; }
     
+    /* LOADING SPINNER */
     .spinner { border: 3px solid rgba(255,255,255,0.1); border-radius: 50%; border-top: 3px solid #00ff88; width: 24px; height: 24px; animation: spin 1s linear infinite; margin: 20px auto; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     .back-row { padding: 10px 15px; color: #888; cursor: pointer; font-size: 0.9em; display: flex; align-items: center; gap: 5px; }
@@ -49,6 +58,8 @@
 </head>
 
 <body>
+    <canvas id="trail-canvas"></canvas>
+
     <header class="header" style="text-align: center; padding: 40px 20px;">
         <div id="header-content">
             <img id="userPhoto" src="assets/img/casanova.png" alt="casanova Logo">
@@ -112,7 +123,6 @@
     </div>
 
     <script>
-        // CONFIG: Your Cloudflare Worker URL
         const WORKER_URL = "https://casanova-cloud.rajdeep-3305.workers.dev";
         
         let folderHistory = [];
@@ -125,7 +135,7 @@
                 modal.style.opacity = '1';
                 document.querySelector('.modal-content').style.transform = 'scale(1)';
             }, 10);
-            loadFiles(); // Load root folder
+            loadFiles();
         }
 
         function closeModal() {
@@ -133,13 +143,12 @@
             document.querySelector('.modal-content').style.transform = 'scale(0.9)';
             setTimeout(() => {
                 modal.style.display = 'none';
-                folderHistory = []; // Reset history
+                folderHistory = [];
             }, 300);
         }
 
         async function loadFiles(folderId = null) {
             list.innerHTML = '<div class="spinner"></div>';
-            
             try {
                 const response = await fetch(WORKER_URL, {
                     method: 'POST',
@@ -155,14 +164,12 @@
 
         function renderFiles(files, currentFolder) {
             list.innerHTML = '';
-            
-            // Add "Back" button if we are deep in folders
             if (folderHistory.length > 0) {
                 const backDiv = document.createElement('div');
                 backDiv.className = 'back-row';
                 backDiv.innerHTML = '<span class="material-symbols-rounded">arrow_back</span> Back';
                 backDiv.onclick = () => {
-                    folderHistory.pop(); // Remove current
+                    folderHistory.pop();
                     const prev = folderHistory.length > 0 ? folderHistory[folderHistory.length - 1] : null;
                     loadFiles(prev);
                 };
@@ -195,9 +202,6 @@
                         folderHistory.push(f.id);
                         loadFiles(f.id);
                     } else {
-                        // DOWNLOAD TRIGGER
-                        // "window.location.href" ensures it downloads on the current page
-                        // It does NOT open a new tab.
                         window.location.href = `${WORKER_URL}/${f.id}`;
                     }
                 };
@@ -211,10 +215,134 @@
             return (s / Math.pow(1024, i)).toFixed(2) * 1 + " " + ["B", "kB", "MB", "GB", "TB"][i];
         }
 
-        // Close modal when clicking outside
         window.onclick = function(event) {
             if (event.target == modal) closeModal();
         }
+    </script>
+
+    <script>
+        const canvas = document.getElementById('trail-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let mouse = { x: undefined, y: undefined };
+        let lastMouse = { x: undefined, y: undefined };
+        
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+            
+            if (lastMouse.x === undefined) {
+                lastMouse.x = mouse.x;
+                lastMouse.y = mouse.y;
+                return;
+            }
+
+            const dx = mouse.x - lastMouse.x;
+            const dy = mouse.y - lastMouse.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const step = 2; 
+            
+            for (let i = 0; i < distance; i += step) {
+                const percent = i / distance;
+                const x = lastMouse.x + (dx * percent);
+                const y = lastMouse.y + (dy * percent);
+                particles.push(new Particle(x, y));
+            }
+
+            lastMouse.x = mouse.x;
+            lastMouse.y = mouse.y;
+        });
+
+        window.addEventListener('mousedown', (e) => {
+            for (let i = 0; i < 15; i++) {
+                const p = new Particle(e.x, e.y);
+                p.speedX = (Math.random() - 0.5) * 8;
+                p.speedY = (Math.random() - 0.5) * 8;
+                p.size = Math.random() * 3 + 2;
+                p.life = 1.5;
+                particles.push(p);
+            }
+        });
+
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 8 + 2; 
+                this.speedX = Math.random() * 0.4 - 0.2;
+                this.speedY = Math.random() * 0.4 - 0.2;
+                this.life = 1.0; 
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.life -= 0.015; 
+            }
+
+            draw() {
+                const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+                gradient.addColorStop(0, 'rgba(255, 255, 255, ' + (this.life * 0.3) + ')'); 
+                gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function animate() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)'; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.globalCompositeOperation = 'lighter';
+
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                
+                if (particles[i].life <= 0) {
+                    particles.splice(i, 1);
+                    i--;
+                }
+            }
+            
+            ctx.globalCompositeOperation = 'source-over';
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+
+        // 3D TILT EFFECT FOR CARDS
+        const cards = document.querySelectorAll('.table');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = ((y - centerY) / centerY) * -10;
+                const rotateY = ((x - centerX) / centerX) * 10;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale(1)`;
+            });
+        });
     </script>
 </body>
 </html>
