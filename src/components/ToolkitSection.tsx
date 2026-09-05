@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { gsap } from 'gsap';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ChevronDown, Sparkles, Layers } from 'lucide-react';
 import { ARSENAL_CATEGORIES } from '../data/portfolioData';
@@ -121,6 +122,7 @@ function ArsenalCard({
 export default function ToolkitSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
   const col1Ref = useRef<HTMLDivElement>(null);
   const col2Ref = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);

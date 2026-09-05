@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { gsap } from 'gsap';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
   ExternalLink,
@@ -38,6 +39,7 @@ export default function AxionAOSPShowcase() {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
   const phoneContainerRef = useRef<HTMLDivElement>(null);
   const phoneFrameRef = useRef<HTMLDivElement>(null);
   const layer0Ref = useRef<HTMLDivElement>(null);

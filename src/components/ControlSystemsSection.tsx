@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { motion } from 'framer-motion';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Compass, CheckCircle2, Waves } from 'lucide-react';
@@ -27,6 +28,7 @@ export default function ControlSystemsSection() {
   const [activeStage, setActiveStage] = useState(0);
   // Read continuous stage directly from ref for animation math to avoid re-renders.
   const continuousStageRef = useRef(0);
+  const prefersReducedMotion = usePrefersReducedMotion();
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 

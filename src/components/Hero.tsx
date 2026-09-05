@@ -47,12 +47,15 @@ export default function Hero() {
     return () => ctx.revert();
   }, [prefersReducedMotion]);
 
+  const [isHovered, setIsHovered] = useState(false);
+
   useEffect(() => {
+    if (prefersReducedMotion || isHovered) return;
     const interval = setInterval(() => {
       setRoleIndex((prev) => (prev + 1) % roles.length);
     }, 2600);
     return () => clearInterval(interval);
-  }, [roles.length]);
+  }, [roles.length, prefersReducedMotion, isHovered]);
 
   const scrollToStatement = () => {
     scrollToTarget('#statement');
@@ -64,7 +67,7 @@ export default function Hero() {
       className="relative min-h-screen w-full overflow-hidden flex flex-col justify-between items-center bg-[#070709] pt-28 pb-12 px-4 select-none"
     >
 
-      <video
+      <video poster="/assets/axion/hero_main.webp"
         ref={videoRef}
         autoPlay
         muted
@@ -72,7 +75,7 @@ export default function Hero() {
         playsInline
         aria-hidden="true"
         className={`absolute inset-0 w-full h-full object-cover -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 min-w-full min-h-full transition-opacity duration-1000 ${
-          isLoaded ? 'opacity-35' : 'opacity-0'
+          'opacity-35'
         }`}
       />
 

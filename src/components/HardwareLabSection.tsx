@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
   Cpu,
@@ -16,6 +17,7 @@ gsap.registerPlugin(ScrollTrigger);
 export default function HardwareLabSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
   const trackRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
