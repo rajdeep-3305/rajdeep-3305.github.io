@@ -185,8 +185,8 @@ function ProjectCard({
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-1.5 text-xs font-mono px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-text-primary transition-all border border-white/10"
               >
-                <GitBranch size={12} />
-                Inspect
+                View technical work &#8594;
+
               </a>
             </div>
           </div>
