@@ -2,13 +2,9 @@ import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { Github, Mail, Send } from 'lucide-react';
 import Magnet from './Magnet';
-import { useHlsVideo } from '../hooks/useHlsVideo';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 
-const HLS_STREAM_URL = "https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8";
-
 export default function Footer() {
-  const { videoRef, isLoaded } = useHlsVideo({ src: HLS_STREAM_URL });
   const prefersReducedMotion = usePrefersReducedMotion();
   const marqueeRef = useRef<HTMLDivElement>(null);
 
@@ -28,20 +24,23 @@ export default function Footer() {
   }, [prefersReducedMotion]);
 
   return (
-    <footer id="contact" className="relative bg-[#040406] pt-24 md:pt-36 pb-12 overflow-hidden border-t border-stroke/40">
+    <footer id="contact" className="relative bg-[#030304] pt-24 md:pt-36 pb-12 overflow-hidden border-t border-stroke/40">
 
-      <video
-        ref={videoRef}
-        autoPlay
-        muted
-        loop
-        playsInline
-        aria-hidden="true"
-        className={`absolute inset-0 w-full h-full object-cover scale-y-[-1] transition-opacity duration-1000 ${
-          isLoaded ? 'opacity-20' : 'opacity-0'
-        }`}
-      />
-      <div className="absolute inset-0 bg-black/80" />
+      <div className="absolute inset-0 pointer-events-none">
+
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[radial-gradient(ellipse_at_top,_rgba(137,170,204,0.05)_0%,_transparent_70%)]" />
+        
+
+        <div 
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: `linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)`,
+            backgroundSize: '4rem 4rem',
+            maskImage: 'radial-gradient(ellipse 60% 60% at 50% 20%, #000 30%, transparent 100%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 60% 60% at 50% 20%, #000 30%, transparent 100%)'
+          }}
+        />
+      </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
 
