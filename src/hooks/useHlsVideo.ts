@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import Hls from 'hls.js';
 
 interface UseHlsVideoOptions {
@@ -8,17 +8,12 @@ interface UseHlsVideoOptions {
 
 export function useHlsVideo({ src, autoPlay = true }: UseHlsVideoOptions) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [hasError, setHasError] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
 
   const playVideo = useCallback(async () => {
     if (!videoRef.current) return;
     try {
       await videoRef.current.play();
-      setIsPlaying(true);
     } catch {
-      setIsPlaying(false);
     }
   }, []);
 
@@ -29,14 +24,12 @@ export function useHlsVideo({ src, autoPlay = true }: UseHlsVideoOptions) {
     let hls: Hls | null = null;
 
     const handleLoadedMetadata = () => {
-      setIsLoaded(true);
       if (autoPlay) {
         playVideo();
       }
     };
 
     const handleNativeError = () => {
-      setHasError(true);
     };
 
     if (Hls.isSupported()) {
@@ -51,8 +44,7 @@ export function useHlsVideo({ src, autoPlay = true }: UseHlsVideoOptions) {
       hls.attachMedia(video);
 
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        setIsLoaded(true);
-        if (autoPlay) {
+          if (autoPlay) {
           playVideo();
         }
       });
@@ -67,8 +59,7 @@ export function useHlsVideo({ src, autoPlay = true }: UseHlsVideoOptions) {
               hls?.recoverMediaError();
               break;
             default:
-              setHasError(true);
-              hls?.destroy();
+                      hls?.destroy();
               break;
           }
         }
@@ -79,7 +70,6 @@ export function useHlsVideo({ src, autoPlay = true }: UseHlsVideoOptions) {
       // Catch native playback errors (e.g., iOS Low Power Mode blocking autoplay)
       video.addEventListener('error', handleNativeError);
     } else {
-      setHasError(true);
     }
 
     return () => {
@@ -91,5 +81,5 @@ export function useHlsVideo({ src, autoPlay = true }: UseHlsVideoOptions) {
     };
   }, [src, autoPlay, playVideo]);
 
-  return { videoRef, isLoaded, hasError, isPlaying, playVideo };
+  return { videoRef, playVideo };
 }
