@@ -57,10 +57,14 @@ export default function StatsSection() {
         </div>
 
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+        <div className="relative grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+
+          <div className="hidden md:block absolute top-[45%] left-10 right-10 h-px bg-gradient-to-r from-transparent via-[#89AACC]/20 to-transparent pointer-events-none" />
+
           {STATS.map((stat, i) => {
             const isPlus = stat.value.includes('+');
             const suffix = isPlus ? '+' : '';
+            const isCenter = i === 1;
 
             return (
               <motion.div
@@ -68,15 +72,27 @@ export default function StatsSection() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="p-8 rounded-3xl liquid-glass-edge bg-surface/30 border border-white/10 flex flex-col justify-between min-h-[190px] hover:border-[#89AACC]/40 transition-colors"
+                transition={{ duration: 0.5, delay: i * 0.15 }}
+                className={`relative p-8 rounded-3xl liquid-glass-edge border flex flex-col justify-between min-h-[190px] transition-all duration-500 hover:border-[#89AACC]/40 group ${
+                  isCenter
+                    ? 'bg-surface/50 border-[#89AACC]/20 md:-translate-y-4 shadow-[0_8px_32px_rgba(137,170,204,0.06)] z-10'
+                    : 'bg-surface/20 border-white/10 opacity-85 hover:opacity-100 z-0'
+                }`}
               >
-                <div className="text-5xl sm:text-6xl font-display italic accent-gradient-text tracking-tight mb-4 flex items-baseline">
+                {isCenter && (
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(137,170,204,0.06)_0%,_transparent_60%)] rounded-3xl pointer-events-none" />
+                )}
+
+                <div className={`relative z-10 text-5xl sm:text-6xl font-display italic tracking-tight mb-4 flex items-baseline transition-transform duration-300 group-hover:translate-x-1 ${
+                  isCenter ? 'accent-gradient-text' : 'text-text-primary'
+                }`}>
                   <AnimatedCounter target={stat.numericValue} suffix={suffix} />
                 </div>
 
-                <div>
-                  <div className="text-sm font-medium text-text-primary uppercase tracking-wider mb-1">
+                <div className="relative z-10">
+                  <div className={`text-sm font-medium uppercase tracking-wider mb-1 ${
+                    isCenter ? 'text-text-primary' : 'text-text-primary/90'
+                  }`}>
                     {stat.label}
                   </div>
                   <div className="text-xs text-muted font-light font-mono">
