@@ -335,7 +335,7 @@ export const CONTROL_SYSTEMS: ControlSystemModel[] = [
       "Formulated continuous state equations representing physical electromechanical systems. Evaluated time-domain step response parameters: rise time (t_r), peak overshoot (M_p), and settling time (t_s 2%).",
     parameters: [
       { name: "Rise Time (t_r)", value: "0.24 s", desc: "10% to 90% transition" },
-      { name: "Peak Overshoot (M_p)", value: "4.8 %", desc: "Maximum deviation" },
+      { name: "Peak Overshoot (M_p)", value: "4.3%", desc: "Maximum deviation" },
       { name: "Settling Time (t_s)", value: "0.85 s", desc: "Within ±2% band" },
     ],
     gradient: "radial-gradient(circle at 40% 80%, rgba(26,58,58,0.4), rgba(6,14,14,0.2))",
