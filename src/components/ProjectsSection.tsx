@@ -20,71 +20,80 @@ function ProjectCard({
   const scale = useTransform(scrollYProgress, [start, 1], [1, targetScale]);
 
   return (
-    <div className="h-screen sticky top-0 flex items-center justify-center pt-16 pb-8 px-4">
+    <div className="h-[100svh] md:h-screen sticky top-0 flex flex-col items-center justify-center pt-6 pb-6 md:pt-16 md:pb-8 px-4">
       <motion.article
         style={{
           scale,
           top: `calc(10% + ${index * 22}px)`,
           background: project.gradient,
         }}
-        className="w-full max-w-5xl rounded-3xl liquid-glass-edge p-6 sm:p-10 border border-white/15 shadow-2xl backdrop-blur-2xl relative overflow-hidden flex flex-col justify-between min-h-[480px] sm:min-h-[520px]"
+        className="w-full max-w-5xl rounded-3xl liquid-glass-edge p-5 md:p-10 border border-white/15 shadow-2xl backdrop-blur-2xl relative overflow-hidden flex flex-col justify-between min-h-[400px] md:min-h-[520px]"
       >
 
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(137,170,204,0.12)_0%,_transparent_65%)] pointer-events-none" />
 
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center">
 
           <div className="lg:col-span-7 flex flex-col items-center justify-center">
-            <div className="relative w-full max-w-lg aspect-[16/10] rounded-2xl overflow-hidden border border-white/15 bg-black/85 shadow-2xl group flex items-center justify-center p-6">
+            <div className="relative w-full max-w-lg aspect-[16/10] rounded-2xl overflow-hidden border border-white/15 bg-black/85 shadow-2xl group flex items-center justify-center p-4 md:p-6">
               {index === 0 ? (
 
-                <div className="flex flex-col items-center justify-center text-center space-y-3">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#89AACC] to-[#4E85BF] p-0.5 shadow-xl flex items-center justify-center">
-                    <div className="w-full h-full bg-black rounded-[14px] flex items-center justify-center">
-                      <span className="font-display italic text-2xl text-[#89AACC] font-bold">ax</span>
+                <div className="relative w-full h-full">
+                  <img
+                    src="/assets/axion/hero_main.webp"
+                    alt="AxionOS SystemUI on Redmi Note 12 Pro 5G"
+                    className="absolute inset-0 w-full h-full object-cover object-top rounded-2xl"
+                    loading="lazy"
+                    decoding="async"
+                  />
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent rounded-2xl" />
+
+                  <div className="absolute bottom-3 left-3 flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-[#89AACC] to-[#4E85BF] p-0.5 shadow-lg flex items-center justify-center">
+                      <div className="w-full h-full bg-black rounded-[9px] flex items-center justify-center">
+                        <span className="font-display italic text-sm text-[#89AACC] font-bold leading-none">ax</span>
+                      </div>
                     </div>
+                    <span className="text-[10px] font-mono text-white/80 flex flex-col">
+                      <span>Official AxionOS Visual</span>
+                      <span className="text-[8px] text-white/50">Rajdeep: Device Maintainer</span>
+                    </span>
                   </div>
-                  <div>
-                    <h4 className="font-display italic text-2xl text-white">AxionAOSP</h4>
-                    <p className="text-xs font-mono text-muted">Redmi Note 12 Pro 5G Official Builds</p>
-                  </div>
-                  <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    5,142+ Downloads Recorded
-                  </span>
                 </div>
               ) : index === 1 ? (
 
-                <div className="w-full font-mono text-xs space-y-2 select-text">
-                  <div className="flex items-center justify-between pb-2 border-b border-white/10 text-[11px] text-muted">
-                    <span>device/xiaomi/rubyx</span>
-                    <span className="text-[#89AACC]">Android 17</span>
+                <div className="relative w-full h-full">
+                  <img
+                    src="/assets/axion/workspace_front.webp"
+                    alt="rubyx Device Tree & Android 17 Bringup"
+                    className="absolute inset-0 w-full h-full object-cover object-top rounded-2xl"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent rounded-2xl" />
+                  <div className="absolute bottom-3 left-3">
+                    <span className="text-[10px] font-mono text-emerald-300/90 px-2 py-0.5 rounded-lg bg-black/60 border border-emerald-400/20">
+                      device/xiaomi/rubyx · Android 17
+                    </span>
                   </div>
-                  <p className="text-emerald-400 text-[11px]">
-                    + TARGET_ARCH := arm64 (Dimensity 1080)
-                  </p>
-                  <p className="text-white/80 text-[11px]">
-                    + TARGET_USES_DRM_DISPLAY := true (120Hz)
-                  </p>
-                  <p className="text-muted text-[10px]">
-                    + SELinux Enforcing (0 denials) · Camera HIDL
-                  </p>
                 </div>
               ) : index === 2 ? (
 
-                <div className="w-full font-mono text-xs space-y-2 select-text">
-                  <div className="flex items-center justify-between pb-2 border-b border-white/10 text-[11px] text-muted">
-                    <span>kernel/xiaomi/mt6877</span>
-                    <span className="text-amber-400">Linux 4.19.325 LTS</span>
+                <div className="relative w-full h-full">
+                  <img
+                    src="/assets/axion/kernel_manager.webp"
+                    alt="MT6877 Kernel Manager — EAS Scheduler & CPU Policy"
+                    className="absolute inset-0 w-full h-full object-cover object-top rounded-2xl"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent rounded-2xl" />
+                  <div className="absolute bottom-3 left-3">
+                    <span className="text-[10px] font-mono text-amber-300/90 px-2 py-0.5 rounded-lg bg-black/60 border border-amber-400/20">
+                      Linux 4.19.325 LTS · EAS Schedutil
+                    </span>
                   </div>
-                  <p className="text-cyan-300 text-[11px]">
-                    + EAS Schedutil CPU Energy Model Tuning
-                  </p>
-                  <p className="text-white/80 text-[11px]">
-                    + LZ4 Fast Compression & PSI Memory Tracking
-                  </p>
-                  <p className="text-muted text-[10px]">
-                    + Low Memory Killer (LMK) & BPF Subsystem
-                  </p>
                 </div>
               ) : (
 
