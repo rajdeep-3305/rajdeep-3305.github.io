@@ -11,7 +11,7 @@ import { scrollToTarget } from '../hooks/useLenis';
 const HLS_STREAM_URL = "https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8";
 
 export default function Hero() {
-  const { videoRef, isLoaded } = useHlsVideo({ src: HLS_STREAM_URL });
+  const { videoRef } = useHlsVideo({ src: HLS_STREAM_URL });
   const [roleIndex, setRoleIndex] = useState(0);
   const prefersReducedMotion = usePrefersReducedMotion();
 
@@ -116,7 +116,7 @@ export default function Hero() {
 
         <div
           aria-hidden="true"
-          className="hero-fade-in opacity-0 filter blur-[8px] translate-y-4 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/15 backdrop-blur-md mb-10"
+          className="hero-fade-in opacity-0 filter blur-[8px] translate-y-4 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/15 backdrop-blur-md mb-10" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}
         >
           <span className="w-1.5 h-1.5 rounded-full bg-[#89AACC] animate-pulse" />
           <span className="text-xs sm:text-sm font-mono text-muted">Discipline:</span>

@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ExternalLink, GitBranch, Terminal, Layers } from 'lucide-react';
+import { ExternalLink, Terminal, Layers } from 'lucide-react';
 import { PROJECTS } from '../data/portfolioData';
 import { Project } from '../types/portfolio';
 
