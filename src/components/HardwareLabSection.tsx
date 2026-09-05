@@ -30,6 +30,7 @@ export default function HardwareLabSection() {
     const mm = gsap.matchMedia();
 
     mm.add('(min-width: 768px)', () => {
+      if (prefersReducedMotion) return;
       const N = HARDWARE_EXPERIMENTS.length;
       const totalPan = (N - 1) * 100;
 
@@ -46,7 +47,7 @@ export default function HardwareLabSection() {
         onUpdate: (self) => {
           if (trackRef.current) {
             gsap.set(trackRef.current, {
-              xPercent: -totalPan * (2 / 3) * self.progress,
+              xPercent: prefersReducedMotion ? 0 : -totalPan * (2 / 3) * self.progress,
             });
           }
 
@@ -139,7 +140,7 @@ export default function HardwareLabSection() {
           </div>
         </div>
 
-        <div className="w-full overflow-x-auto md:overflow-visible flex-1 flex items-center my-auto py-4">
+        <div className="w-full overflow-x-auto flex-1 flex items-center my-auto py-4">
           <div
             ref={trackRef}
             className="flex flex-row gap-6 md:gap-10 px-6 md:px-12 w-fit select-none"

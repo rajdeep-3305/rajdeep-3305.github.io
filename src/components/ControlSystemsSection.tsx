@@ -64,8 +64,8 @@ export default function ControlSystemsSection() {
         return;
       }
       gsap.set(el, {
-        autoAlpha: Math.cos(Math.min(dist, 1) * Math.PI / 2),
-        filter: `blur(${Math.min(dist * 6, 8)}px)`,
+        autoAlpha: prefersReducedMotion ? (dist < 0.5 ? 1 : 0) : Math.cos(Math.min(dist, 1) * Math.PI / 2),
+        filter: prefersReducedMotion ? "none" : `blur(${Math.min(dist * 6, 8)}px)`,
       });
     });
   };
@@ -142,7 +142,7 @@ export default function ControlSystemsSection() {
     if (!el) return;
     const len = el.getTotalLength();
     gsap.set(el, { strokeDasharray: len, strokeDashoffset: len });
-    gsap.to(el, { strokeDashoffset: 0, duration, delay, ease });
+    gsap.to(el, { strokeDashoffset: 0, duration: prefersReducedMotion ? 0 : duration, delay: prefersReducedMotion ? 0 : delay, ease });
   }
 
   useEffect(() => {
@@ -158,22 +158,22 @@ export default function ControlSystemsSection() {
     tl.add(() => {
       const labels = axisLabel1Refs.current.filter(Boolean);
       gsap.set(labels, { opacity: 0 });
-      gsap.to(labels, { opacity: 1, duration: 0.3, stagger: 0.08, delay: 0.05 });
+      gsap.to(labels, { opacity: 1, duration: prefersReducedMotion ? 0 : 0.3, stagger: 0.08, delay: prefersReducedMotion ? 0 : 0.05 });
     }, '+=0.25');
 
     tl.add(() => {
       if (path1Ref.current) {
         const len = path1Ref.current.getTotalLength();
         gsap.set(path1Ref.current, { strokeDasharray: len, strokeDashoffset: len, opacity: 1 });
-        gsap.to(path1Ref.current, { strokeDashoffset: 0, duration: 0.55, ease: 'power2.out' });
+        gsap.to(path1Ref.current, { strokeDashoffset: 0, duration: prefersReducedMotion ? 0 : 0.55, ease: 'power2.out' });
       }
     }, '+=0.1');
 
     tl.add(() => {
       const poles = poleRefs.current.filter(Boolean);
       gsap.set(poles, { opacity: 0 });
-      gsap.to(poles, { opacity: 1, duration: 0.4, stagger: 0.12, delay: 0.1 });
-      if (zeroRef.current) gsap.to(zeroRef.current, { opacity: 1, duration: 0.4, delay: 0.35 });
+      gsap.to(poles, { opacity: 1, duration: prefersReducedMotion ? 0 : 0.4, stagger: 0.12, delay: prefersReducedMotion ? 0 : 0.1 });
+      if (zeroRef.current) gsap.to(zeroRef.current, { opacity: 1, duration: prefersReducedMotion ? 0 : 0.4, delay: prefersReducedMotion ? 0 : 0.35 });
     }, '+=0.15');
   }, [activeStage]);
 
@@ -191,7 +191,7 @@ export default function ControlSystemsSection() {
     tl.add(() => {
       const labels = axisLabel2Refs.current.filter(Boolean);
       gsap.set(labels, { opacity: 0 });
-      gsap.to(labels, { opacity: 1, duration: 0.3, stagger: 0.1 });
+      gsap.to(labels, { opacity: 1, duration: prefersReducedMotion ? 0 : 0.3, stagger: 0.1 });
     }, '+=0.3');
   }, [activeStage]);
 
@@ -207,12 +207,11 @@ export default function ControlSystemsSection() {
     tl.add(() => {
       const labels = axisLabel3Refs.current.filter(Boolean);
       gsap.set(labels, { opacity: 0 });
-      gsap.to(labels, { opacity: 1, duration: 0.35, stagger: 0.1 });
+      gsap.to(labels, { opacity: 1, duration: prefersReducedMotion ? 0 : 0.35, stagger: 0.1 });
     }, '+=0.4');
   }, [activeStage]);
 
   const model = CONTROL_SYSTEMS[activeStage];
-  const continuousStage = continuousStageRef.current;
 
   return (
     <section
@@ -347,12 +346,12 @@ export default function ControlSystemsSection() {
 
                 <motion.div
                   animate={{
-                    opacity: Math.max(0, 1 - Math.abs(continuousStage - 0) * 1.5),
-                    filter: `blur(${Math.abs(continuousStage - 0) * 6}px)`,
+                    opacity: Math.max(0, 1 - Math.abs(0 - 0) * 1.5),
+                    filter: `blur(${Math.abs(0 - 0) * 6}px)`,
                   }}
                   transition={{ duration: 0.2 }}
                   className="absolute inset-0 flex items-center justify-center pointer-events-none"
-                  style={{ visibility: Math.abs(continuousStage - 0) > 1.5 ? 'hidden' : 'visible' }}
+                  style={{ visibility: Math.abs(0 - 0) > 1.5 ? 'hidden' : 'visible' }}
                 >
                   <svg viewBox="0 0 320 110" className="w-full h-28 overflow-visible">
 
@@ -381,12 +380,12 @@ export default function ControlSystemsSection() {
 
                 <motion.div
                   animate={{
-                    opacity: Math.max(0, 1 - Math.abs(continuousStage - 1) * 1.5),
-                    filter: `blur(${Math.abs(continuousStage - 1) * 6}px)`,
+                    opacity: Math.max(0, 1 - Math.abs(0 - 1) * 1.5),
+                    filter: `blur(${Math.abs(0 - 1) * 6}px)`,
                   }}
                   transition={{ duration: 0.2 }}
                   className="absolute inset-0 flex items-center justify-center pointer-events-none"
-                  style={{ visibility: Math.abs(continuousStage - 1) > 1.5 ? 'hidden' : 'visible' }}
+                  style={{ visibility: Math.abs(0 - 1) > 1.5 ? 'hidden' : 'visible' }}
                 >
                   <svg viewBox="0 0 320 110" className="w-full h-28 overflow-visible">
 
@@ -418,12 +417,12 @@ export default function ControlSystemsSection() {
 
                 <motion.div
                   animate={{
-                    opacity: Math.max(0, 1 - Math.abs(continuousStage - 2) * 1.5),
-                    filter: `blur(${Math.abs(continuousStage - 2) * 6}px)`,
+                    opacity: Math.max(0, 1 - Math.abs(0 - 2) * 1.5),
+                    filter: `blur(${Math.abs(0 - 2) * 6}px)`,
                   }}
                   transition={{ duration: 0.2 }}
                   className="absolute inset-0 flex items-center justify-center pointer-events-none"
-                  style={{ visibility: Math.abs(continuousStage - 2) > 1.5 ? 'hidden' : 'visible' }}
+                  style={{ visibility: Math.abs(0 - 2) > 1.5 ? 'hidden' : 'visible' }}
                 >
                   <svg viewBox="0 0 320 110" className="w-full h-28 overflow-visible">
 

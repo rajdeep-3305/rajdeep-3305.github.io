@@ -150,15 +150,15 @@ export default function ToolkitSection() {
       };
 
       gsap.to(col1Ref.current, {
-        y: -640,
-        rotateZ: -1.2,
+        y: prefersReducedMotion ? 0 : -640,
+        rotateZ: prefersReducedMotion ? 0 : -1.2,
         ease: 'none',
         scrollTrigger: { ...sharedST, scrub: 1.2 },
       });
 
       gsap.to(col2Ref.current, {
-        y: 640,
-        rotateZ: 1.2,
+        y: prefersReducedMotion ? 0 : 640,
+        rotateZ: prefersReducedMotion ? 0 : 1.2,
         ease: 'none',
         scrollTrigger: { ...sharedST, scrub: 1.6 },
       });

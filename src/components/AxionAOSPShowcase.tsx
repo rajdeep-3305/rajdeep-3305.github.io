@@ -79,7 +79,7 @@ export default function AxionAOSPShowcase() {
 
           if (phoneFrameRef.current) {
             gsap.set(phoneFrameRef.current, {
-              rotateY: (1 - self.progress * 2) * 3,
+              rotateY: prefersReducedMotion ? 0 : (1 - self.progress * 2) * 3,
             });
           }
 
