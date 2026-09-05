@@ -2,10 +2,22 @@ import { useState, useEffect } from 'react';
 import { Send, Github } from 'lucide-react';
 import Magnet from './Magnet';
 import { useActiveSection } from '../hooks/useActiveSection';
+import { scrollToTarget } from '../hooks/useLenis';
+
+// Defined at module level — stable reference, never causes hook re-attachment
+const NAV_SECTION_IDS = ['home', 'systems', 'projects', 'hardware', 'contact'] as const;
+
+const navItems = [
+  { label: 'Home', id: 'home' },
+  { label: 'Systems', id: 'systems' },
+  { label: 'Work', id: 'projects' },
+  { label: 'Lab', id: 'hardware' },
+  { label: 'Contact', id: 'contact' },
+] as const;
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const activeSection = useActiveSection(['home', 'systems', 'projects', 'hardware', 'contact']);
+  const activeSection = useActiveSection(NAV_SECTION_IDS as unknown as string[]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 80);
@@ -14,19 +26,8 @@ export default function Navbar() {
   }, []);
 
   const scrollTo = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
+    scrollToTarget(`#${id}`);
   };
-
-  const navItems = [
-    { label: 'Home', id: 'home' },
-    { label: 'Systems', id: 'systems' },
-    { label: 'Work', id: 'projects' },
-    { label: 'Lab', id: 'hardware' },
-    { label: 'Contact', id: 'contact' },
-  ];
 
   return (
     <header

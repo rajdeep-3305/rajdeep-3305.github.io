@@ -1,5 +1,4 @@
 import { useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
@@ -18,28 +17,89 @@ export default function HardwareLabSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const wavePathRefs = useRef<(SVGPathElement | null)[][]>([[], [], []]);
+  // Store total lengths for each path to avoid repeated getTotalLength() calls
+  const waveLengthsRef = useRef<(number | null)[][]>([[], [], []]);
+  const waveInitRef = useRef(false);
 
   useEffect(() => {
     const mm = gsap.matchMedia();
 
-    mm.add("(min-width: 768px)", () => {
-      // Pin viewport and scrub the horizontal film-strip track continuously
-      const totalPan = (HARDWARE_EXPERIMENTS.length - 1) * 100;
+    mm.add('(min-width: 768px)', () => {
+      const N = HARDWARE_EXPERIMENTS.length;
+      const totalPan = (N - 1) * 100;
 
-      gsap.to(trackRef.current, {
-        xPercent: -totalPan * (2 / 3),
-        ease: "none",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "+=3200",
-          pin: contentRef.current,
-          pinSpacing: true,
-          anticipatePin: 1,
-          fastScrollEnd: true,
-          invalidateOnRefresh: true,
-          scrub: 0.8,
+      const st = ScrollTrigger.create({
+        trigger: containerRef.current,
+        start: 'top top',
+        end: '+=3200',
+        pin: contentRef.current,
+        pinSpacing: true,
+        anticipatePin: 1,
+        fastScrollEnd: true,
+        invalidateOnRefresh: true,
+        scrub: 0.8,
+        onUpdate: (self) => {
+          if (trackRef.current) {
+            gsap.set(trackRef.current, {
+              xPercent: -totalPan * (2 / 3) * self.progress,
+            });
+          }
+
+          const progress = self.progress;
+          cardRefs.current.forEach((card, i) => {
+            if (!card) return;
+            const cardCenter = i / (N - 1);
+            const dist = Math.abs(progress - cardCenter);
+            const scale   = Math.max(0.93, 1 - dist * 0.28);
+            const opacity = Math.max(0.55, 1 - dist * 1.5);
+            gsap.set(card, { scale, opacity });
+          });
+
+          if (!waveInitRef.current) {
+            wavePathRefs.current.forEach((cardPaths, ci) => {
+              cardPaths.forEach((path, pi) => {
+                if (!path) return;
+                const len = path.getTotalLength();
+                waveLengthsRef.current[ci] = waveLengthsRef.current[ci] || [];
+                waveLengthsRef.current[ci][pi] = len;
+                gsap.set(path, { strokeDasharray: len, strokeDashoffset: len });
+              });
+            });
+            waveInitRef.current = true;
+          }
+
+          wavePathRefs.current.forEach((cardPaths, ci) => {
+            const cardCenter = ci / (N - 1);
+            const dist = Math.min(1, Math.abs(progress - cardCenter));
+            cardPaths.forEach((path, pi) => {
+              if (!path) return;
+              const len = waveLengthsRef.current[ci]?.[pi];
+              if (!len) return;
+              const dashoffset = len * Math.pow(dist, 0.6);
+              gsap.set(path, { strokeDashoffset: dashoffset });
+            });
+          });
         },
+      });
+
+      return () => {
+        st.kill();
+      };
+    });
+
+    mm.add('(max-width: 767px)', () => {
+      // On mobile: remove scale/opacity overrides set by desktop logic
+      cardRefs.current.forEach((card) => {
+        if (card) gsap.set(card, { clearProps: 'scale,opacity' });
+      });
+      // Reset all waveform paths to fully visible on mobile
+      wavePathRefs.current.forEach((cardPaths) => {
+        cardPaths.forEach((path) => {
+          if (path) gsap.set(path, { clearProps: 'strokeDashoffset,strokeDasharray' });
+        });
       });
     });
 
@@ -85,7 +145,9 @@ export default function HardwareLabSection() {
             {HARDWARE_EXPERIMENTS.map((exp, index) => (
               <div
                 key={exp.id}
+                ref={(el) => { cardRefs.current[index] = el; }}
                 className="w-[85vw] sm:w-[540px] md:w-[680px] lg:w-[780px] flex-shrink-0 rounded-3xl liquid-glass-edge p-6 sm:p-8 border border-white/10 bg-surface/60 backdrop-blur-2xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-center shadow-2xl"
+                style={{ transformOrigin: 'center center' }}
               >
                 <div className="lg:col-span-6">
                   <div className="flex items-center gap-2.5 mb-2.5">
@@ -158,20 +220,23 @@ export default function HardwareLabSection() {
                     {index === 0 ? (
                       <svg viewBox="0 0 320 100" className="w-full h-24 overflow-visible">
                         <line x1="0" y1="50" x2="320" y2="50" stroke="#ffffff" strokeOpacity="0.15" />
-                        <motion.path
+                        <path
+                          ref={(el) => { wavePathRefs.current[0][0] = el; }}
                           d="M 0,50 Q 40,-10 80,50 T 160,50 T 240,50 T 320,50"
                           fill="none"
                           stroke="#89AACC"
                           strokeWidth="2"
                         />
-                        <motion.path
+                        <path
+                          ref={(el) => { wavePathRefs.current[0][1] = el; }}
                           d="M 0,50 Q 40,15 80,50 T 160,50 T 240,50 T 320,50"
                           fill="none"
                           stroke="#34D399"
                           strokeWidth="2"
                           strokeDasharray="4 2"
                         />
-                        <motion.path
+                        <path
+                          ref={(el) => { wavePathRefs.current[0][2] = el; }}
                           d="M 0,50 Q 40,5 80,50 T 160,50 T 240,50 T 320,50"
                           fill="none"
                           stroke="#FBBF24"
@@ -185,7 +250,8 @@ export default function HardwareLabSection() {
                       <svg viewBox="0 0 320 100" className="w-full h-24 overflow-visible">
                         <line x1="0" y1="35" x2="320" y2="35" stroke="#F43F5E" strokeOpacity="0.4" strokeDasharray="3 3" />
                         <line x1="0" y1="80" x2="320" y2="80" stroke="#ffffff" strokeOpacity="0.1" />
-                        <motion.path
+                        <path
+                          ref={(el) => { wavePathRefs.current[1][0] = el; }}
                           d="M 0,80 C 60,80 100,75 140,35 C 170,10 240,10 320,10"
                           fill="none"
                           stroke="#F43F5E"
@@ -199,19 +265,22 @@ export default function HardwareLabSection() {
                         <line x1="0" y1="20" x2="320" y2="20" stroke="#ffffff" strokeOpacity="0.1" />
                         <line x1="0" y1="50" x2="320" y2="50" stroke="#ffffff" strokeOpacity="0.1" />
                         <line x1="0" y1="80" x2="320" y2="80" stroke="#ffffff" strokeOpacity="0.1" />
-                        <motion.path
+                        <path
+                          ref={(el) => { wavePathRefs.current[2][0] = el; }}
                           d="M 0,20 L 40,20 L 40,8 L 160,8 L 160,20 L 320,20"
                           fill="none"
                           stroke="#38BDF8"
                           strokeWidth="2"
                         />
-                        <motion.path
+                        <path
+                          ref={(el) => { wavePathRefs.current[2][1] = el; }}
                           d="M 0,50 L 90,50 L 90,38 L 220,38 L 220,50 L 320,50"
                           fill="none"
                           stroke="#818CF8"
                           strokeWidth="2"
                         />
-                        <motion.path
+                        <path
+                          ref={(el) => { wavePathRefs.current[2][2] = el; }}
                           d="M 0,80 L 140,80 L 140,68 L 280,68 L 280,80 L 320,80"
                           fill="none"
                           stroke="#34D399"
@@ -240,10 +309,12 @@ export default function HardwareLabSection() {
                     ))}
                   </div>
 
+                  {index === 2 && (
                   <div className="p-2 rounded-xl bg-amber-400/[0.04] border border-amber-400/20 flex items-center gap-2 text-xs font-mono text-amber-200/90">
                     <ShieldAlert size={12} className="text-amber-400 flex-shrink-0" />
                     <span>Optocoupler dielectric isolation verified up to 3750 Vrms.</span>
                   </div>
+                  )}
                 </div>
               </div>
             ))}

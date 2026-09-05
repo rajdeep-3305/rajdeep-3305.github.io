@@ -6,6 +6,7 @@ import Navbar from './Navbar';
 import Magnet from './Magnet';
 import { useHlsVideo } from '../hooks/useHlsVideo';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
+import { scrollToTarget } from '../hooks/useLenis';
 
 const HLS_STREAM_URL = "https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8";
 
@@ -54,8 +55,7 @@ export default function Hero() {
   }, [roles.length]);
 
   const scrollToStatement = () => {
-    const el = document.getElementById('statement');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    scrollToTarget('#statement');
   };
 
   return (

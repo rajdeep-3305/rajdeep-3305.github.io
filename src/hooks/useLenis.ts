@@ -5,6 +5,36 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Module-level singleton prevents native scrollIntoView() conflicts with Lenis easing.
+let lenisInstance: Lenis | null = null;
+
+export function getLenis(): Lenis | null {
+  return lenisInstance;
+}
+
+/**
+ * Scroll to a CSS selector, element, or numeric offset using Lenis when active,
+ * falling back to native scrollIntoView on mobile/touch where Lenis is disabled.
+ */
+export function scrollToTarget(
+  target: string | HTMLElement | number,
+  offset = 0,
+): void {
+  const lenis = getLenis();
+  if (lenis) {
+    lenis.scrollTo(target, { offset, duration: 1.2 });
+  } else {
+    if (typeof target === 'number') {
+      window.scrollTo({ top: target, behavior: 'smooth' });
+    } else if (typeof target === 'string') {
+      const el = document.querySelector(target);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (target instanceof HTMLElement) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+}
+
 export function useLenis() {
   const lenisRef = useRef<Lenis | null>(null);
 
@@ -28,7 +58,7 @@ export function useLenis() {
       history.scrollRestoration = 'manual';
     }
 
-    // Refresh triggers once fonts and DOM layouts are fully ready
+    // Two-pass ScrollTrigger refresh catches font load completion and late dynamic heights.
     if (document.fonts) {
       document.fonts.ready.then(() => {
         ScrollTrigger.refresh();
@@ -55,8 +85,10 @@ export function useLenis() {
     });
 
     lenisRef.current = lenis;
+    lenisInstance = lenis;
 
-    // Connect Lenis to GSAP ScrollTrigger
+    // Connect Lenis to GSAP ScrollTrigger — Lenis drives ScrollTrigger.update
+    // through its scroll event, keeping both systems in sync on the same frame
     lenis.on('scroll', ScrollTrigger.update);
 
     const tickerCb = (time: number) => {
@@ -71,6 +103,7 @@ export function useLenis() {
       gsap.ticker.remove(tickerCb);
       lenis.destroy();
       lenisRef.current = null;
+      lenisInstance = null;
     };
   }, []);
 

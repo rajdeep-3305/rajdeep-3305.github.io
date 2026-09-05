@@ -54,6 +54,7 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
 
   return (
     <motion.div
+      aria-hidden="true"
       initial={{ opacity: 1 }}
       exit={{ opacity: 0, filter: "blur(30px)", scale: 1.02 }}
       transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
@@ -79,7 +80,6 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
         <div className="relative px-6 sm:px-12 flex items-center justify-center min-w-[280px] sm:min-w-[420px] md:min-w-[560px] h-32 overflow-visible">
           {GREETINGS.map((item, index) => {
             const isCurrent = activeIdx === index;
-            const isPrev = activeIdx === index + 1;
 
             return (
               <motion.div

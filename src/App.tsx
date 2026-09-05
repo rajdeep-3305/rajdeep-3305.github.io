@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { useLenis } from './hooks/useLenis';
 import LoadingScreen from './components/LoadingScreen';
 import FilmGrain from './components/FilmGrain';
@@ -28,7 +29,9 @@ function App() {
       <CustomCursor />
 
 
-      {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
+      <AnimatePresence>
+        {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
+      </AnimatePresence>
 
 
       <Hero />

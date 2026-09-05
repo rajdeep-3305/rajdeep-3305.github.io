@@ -39,6 +39,14 @@ function ArsenalCard({
     >
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.08)_0%,_transparent_65%)] pointer-events-none" />
       <div className="absolute -inset-px rounded-3xl bg-gradient-to-b from-white/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+      <div
+        className="absolute bottom-0 left-0 right-0 h-px pointer-events-none"
+        style={{
+          background: isForeground
+            ? 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)'
+            : 'linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)',
+        }}
+      />
 
       <div className="relative z-10 flex flex-col justify-between h-full">
         <div>
@@ -115,16 +123,16 @@ export default function ToolkitSection() {
   const contentRef = useRef<HTMLDivElement>(null);
   const col1Ref = useRef<HTMLDivElement>(null);
   const col2Ref = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const mm = gsap.matchMedia();
 
-    mm.add("(min-width: 768px)", () => {
-      // Extended spatial workspace journey with zero-jitter pin
+    mm.add('(min-width: 768px)', () => {
       ScrollTrigger.create({
         trigger: containerRef.current,
-        start: "top top",
-        end: "+=3600",
+        start: 'top top',
+        end: '+=3600',
         pin: contentRef.current,
         pinSpacing: true,
         anticipatePin: 1,
@@ -132,42 +140,73 @@ export default function ToolkitSection() {
         invalidateOnRefresh: true,
       });
 
-      // Stream 1 (Android / Linux Systems) multi-axis displacement
+      const sharedST = {
+        trigger: containerRef.current,
+        start: 'top top',
+        end: '+=3600',
+        scrub: 1.4,
+      };
+
       gsap.to(col1Ref.current, {
-        y: -360,
-        rotateZ: -1.5,
-        ease: "none",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "+=3600",
-          scrub: 1.2,
-        },
+        y: -640,
+        rotateZ: -1.2,
+        ease: 'none',
+        scrollTrigger: { ...sharedST, scrub: 1.2 },
       });
 
-      // Stream 2 (Electrical Engineering) multi-axis displacement
       gsap.to(col2Ref.current, {
-        y: 360,
-        rotateZ: 1.5,
-        ease: "none",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "+=3600",
-          scrub: 1.2,
-        },
+        y: 640,
+        rotateZ: 1.2,
+        ease: 'none',
+        scrollTrigger: { ...sharedST, scrub: 1.6 },
       });
+
+      if (titleRef.current) {
+        gsap.to(titleRef.current, {
+          y: -40,
+          ease: 'none',
+          scrollTrigger: { ...sharedST, scrub: 0.6 },
+        });
+      }
+
+      // Per-card Y divergence and asymmetric X offsets create an independent floating 2D spatial field.
+      const col1Cards = col1Ref.current?.querySelectorAll('.mobile-arsenal-card');
+      const col2Cards = col2Ref.current?.querySelectorAll('.mobile-arsenal-card');
+
+      if (col1Cards) {
+        const xOffsets = [40, 20, -10];
+        col1Cards.forEach((card, i) => {
+          gsap.to(card, {
+            y: -(i * 50),
+            x: xOffsets[i] ?? 0,
+            ease: 'none',
+            scrollTrigger: { ...sharedST, scrub: 1.0 + i * 0.3 },
+          });
+        });
+      }
+
+      if (col2Cards) {
+        const xOffsets = [-35, -55, -20];
+        col2Cards.forEach((card, i) => {
+          gsap.to(card, {
+            y: i * 50,
+            x: xOffsets[i] ?? 0,
+            ease: 'none',
+            scrollTrigger: { ...sharedST, scrub: 0.9 + i * 0.25 },
+          });
+        });
+      }
     });
 
-    mm.add("(max-width: 767px)", () => {
-      gsap.from(".mobile-arsenal-card", {
+    mm.add('(max-width: 767px)', () => {
+      gsap.from('.mobile-arsenal-card', {
         opacity: 0,
         y: 20,
         stagger: 0.1,
         duration: 0.5,
         scrollTrigger: {
           trigger: containerRef.current,
-          start: "top 85%",
+          start: 'top 85%',
         },
       });
     });
@@ -185,10 +224,13 @@ export default function ToolkitSection() {
     >
       <div
         ref={contentRef}
-        className="h-screen w-full relative overflow-hidden flex items-center justify-center py-6 md:py-0"
+        className="h-screen w-full relative flex items-center justify-center py-6 md:py-0"
+        style={{ overflow: 'clip' }}
       >
-        {/* Pinned Central Anchor Title in Spatial Workspace */}
-        <div className="md:absolute inset-0 flex items-center justify-center z-20 text-center pointer-events-none px-4 mb-14 md:mb-0">
+        <div
+          ref={titleRef}
+          className="md:absolute inset-0 flex items-center justify-center z-20 text-center pointer-events-none px-4 mb-14 md:mb-0"
+        >
           <div className="max-w-2xl bg-bg/60 md:bg-transparent backdrop-blur-sm md:backdrop-blur-none p-6 rounded-3xl">
             <span className="text-xs text-muted uppercase tracking-[0.3em] mb-4 block font-mono">
               TECHNICAL ARSENAL
@@ -202,7 +244,6 @@ export default function ToolkitSection() {
           </div>
         </div>
 
-        {/* Floating Multi-Depth Spatial Cards Streams */}
         <div className="md:absolute inset-0 z-30 flex items-center justify-center pointer-events-none">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-52 max-w-6xl w-full px-6 pointer-events-auto">
             <div ref={col1Ref} className="flex flex-col gap-6 sm:gap-8 md:pt-40">
